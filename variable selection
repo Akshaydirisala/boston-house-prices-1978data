@@ -1,0 +1,51 @@
+setwd ("c:/MSA5020/files/")
+install.packages("leaps")
+library("leaps"
+SalesData<-read.csv("MEDDICORP8.csv")  #Loading Data
+SalesData$D_South<-as.numeric(SalesData$REGION==1) #Convert Region=1 to South
+SalesData$D_West<-as.numeric(SalesData$REGION==2)  #Convert Region=2 to West
+attach(SalesData)   #Attach Data.
+VarSel.Cp <-leaps(x=cbind(ADV,BONUS, MKTSHR, COMPET, D_South, D_West), SALES, method=c("Cp"), 
+                 names = c("ADV","BONUS", "MKTSHR", "COMPET", "D_South", "D_West"), nbest = 3)
+            #method determines the evaluation. Cp, adjr2, and r2 are the options
+            #nbest determines how many top selection will be presented           
+VarSel.Cp.Table <- cbind(VarSel.Cp$which, VarSel.Cp$size, VarSel.Cp$Cp)
+VarSel.Cp.Table   #At this point, row and coloumn name is not sufficient. Lets convert them.
+
+
+n<- length(VarSel.Cp$size)
+dimnames(VarSel.Cp.Table) <- list(1:n,c("ADV","BONUS","MKTSHR","COMPET","SOUTH","WEST","Size","Cp"))
+
+round(VarSel.Cp.Table ,digits=3)
+plot(VarSel.Cp$size, VarSel.Cp$Cp)
+
+
+######## R2 
+
+VarSel.r2 =leaps(x=cbind(ADV,BONUS, MKTSHR, COMPET, D_South, D_West), SALES, method=c("r2"), nbest = 3)
+#method determines the evaluation. Cp, adjr2, and r2 are the options
+#nbest determines how many top selection will be presented           
+VarSel.r2.Table = cbind(VarSel.r2$which, VarSel.r2$size, VarSel.r2$r2*100)
+VarSel.r2.Table   #At this point, row and coloumn name is not sufficient. Lets convert them.
+
+
+n<-length(VarSel.r2$size)
+dimnames(VarSel.r2.Table) <- list(1:n,c("ADV","BONUS","MKTSHR","COMPET","SOUTH","WEST","Size","r2"))
+
+round(VarSel.r2.Table ,digits=1)
+plot(VarSel.r2$size, VarSel.r2$r2)
+
+######## Adj R2 
+
+VarSel.adjr2 <-leaps(x=cbind(ADV,BONUS, MKTSHR, COMPET, D_South, D_West), SALES, method=c("adjr2"), nbest = 3)
+#method determines the evaluation. Cp, adjr2, and r2 are the options
+#nbest determines how many top selection will be presented           
+VarSel.adjr2.Table <- cbind(VarSel.adjr2$which, VarSel.adjr2$size, VarSel.adjr2$adjr2*100)
+VarSel.adjr2.Table   #At this point, row and coloumn name is not sufficient. Lets convert them.
+
+
+n= length(VarSel.adjr2$size)
+dimnames(VarSel.adjr2.Table) <- list(1:n,c("ADV","BONUS","MKTSHR","COMPET","SOUTH","WEST","Size","adjr2"))
+
+round(VarSel.adjr2.Table ,digits=1)
+plot(VarSel.adjr2$size, VarSel.adjr2$adjr2)
